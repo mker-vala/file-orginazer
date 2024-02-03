@@ -30,18 +30,33 @@ def organize_files(directory):
         if not os.path.exists(subdirectory):
             os.makedirs(subdirectory)
 
+    # Track filenames and detect duplicates
+    seen_files = set()
+
     for file in os.listdir():
-        if is_audio(file):
-            shutil.move(file, audio_directory)
-        elif is_video(file):
-            shutil.move(file, video_directory)
-        elif is_text(file):
-            shutil.move(file, text_directory)
-        elif is_image(file):
-            if is_screenshot(file):
-                shutil.move(file, image_directory)
+        
+        # Check if the file is not a directory
+        if os.path.isfile(file):
+            # Check for duplicates
+            if file in seen_files:
+                # Remove the duplicate file
+                os.remove(file)
             else:
-                shutil.move(file, image_directory)
+                seen_files.add(file)
+
+
+                # Organize the file into subdirectories based on type
+                if is_audio(file):
+                    shutil.move(file, audio_directory)
+                elif is_video(file):
+                    shutil.move(file, video_directory)
+                elif is_text(file):
+                    shutil.move(file, text_directory)
+                elif is_image(file):
+                    if is_screenshot(file):
+                        shutil.move(file, image_directory)
+                    else:
+                        shutil.move(file, image_directory)
 
 def is_audio(file):
     return os.path.splitext(file)[1] in audio_extensions
@@ -65,7 +80,7 @@ def organize_files_with_ui():
         # Rename files with numeric prefixes
         rename_files(directory)
 
-        # Organize files into subdirectories
+        # Organize files into subdirectories and delete duplicates
         organize_files(directory)
         result_label.config(text="Files organized successfully!")
 
@@ -91,7 +106,6 @@ video_extensions = (".webm", ".MTS", ".M2TS", ".TS", ".mov",
                    ".mp4", ".m4p", ".m4v", ".mxf")
 image_extensions = (".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png",
                    ".gif", ".webp", ".svg", ".apng", ".avif")
-
 
 # Create the main window
 root = tk.Tk()
