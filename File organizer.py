@@ -7,9 +7,11 @@ def rename_files(directory):
     os.chdir(directory)
 
     for index, file in enumerate(os.listdir()):
-        # Extract the file extension
-        _, file_extension = os.path.splitext(file)
+         # Check if the item is a file
+        if os.path.isfile(file):
 
+        # Extract the file extension
+          _, file_extension = os.path.splitext(file)
         # Construct the new filename with a numeric prefix
         new_name = f"{index + 1}_file{file_extension}"
 
